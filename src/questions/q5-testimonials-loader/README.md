@@ -28,6 +28,9 @@ In `Starter.jsx`, show "Loading testimonials..." first. After 1.5 seconds
 (use `setTimeout` inside `useEffect`), show the testimonials list. Clean
 up the timeout properly.
 
+Use the `.loading-text` class from `src/index.css` for the loading
+message — don't add new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 What would happen if you forgot the `[]` dependency array entirely? Try it

@@ -28,7 +28,9 @@ Out" badge when stock is 0, and a normal "Add to Cart" button otherwise.
 
 Implement the conditional badge/button logic inside `ProductCard` in
 `Starter.jsx`. When `stock` is `0`, render a "Sold Out" badge (use the
-`badge-sold-out` class). Otherwise, render an "Add to Cart" button.
+`badge badge-danger` classes). Otherwise, render an "Add to Cart" button
+(use `btn btn-primary`). Both come from `src/index.css` — don't add new
+CSS.
 
 ## 🔍 Go Deeper (optional research)
 

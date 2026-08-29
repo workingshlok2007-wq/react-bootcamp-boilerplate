@@ -30,6 +30,15 @@ Each question lives in `src/questions/<question-folder>/`:
 For the full step-by-step Git process, see
 [`docs/git-workflow.md`](./docs/git-workflow.md).
 
+### Styling
+
+`src/index.css` ships a small, ready-made set of classes — `.btn`,
+`.badge`, `.card`, `.input`, `.navbar`, `.filter-bar`, `.carousel`, and a
+few more — covering everything the 10 questions need. Each question's
+README names the exact classes to reach for. Use them instead of writing
+your own CSS or inline styles, so what you submit is a React difference,
+not a styling one.
+
 ## The Rules
 
 - **One branch per question**, named exactly as the question folder (e.g.
@@ -37,6 +46,11 @@ For the full step-by-step Git process, see
   one branch.
 - **Only edit the `Starter.jsx`** inside that question's folder on that
   branch. Leave other files and other questions alone.
+- **Don't add or edit CSS.** Style your markup using only the classes
+  already defined in `src/index.css` (see Styling above and the note in
+  each question's README). If you think a question genuinely needs a new
+  class, ask first rather than adding your own stylesheet or inline
+  styles.
 - **Every commit message must explain, in your own words, what you
   implemented.** Generic messages like `"done"` or `"fix"` aren't
   acceptable — write what you actually built and how, e.g. *"Refactored

@@ -26,6 +26,9 @@ add Prev/Next buttons to manually change the index, and wrap around at
 both ends (after the last image, go back to the first; before the first,
 go to the last).
 
+Wrap the whole thing in `.carousel` and style Prev/Next with `.btn` — see
+`src/index.css`. Don't add new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 How would you pause the auto-advance when the user hovers over the

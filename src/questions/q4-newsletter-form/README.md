@@ -25,6 +25,9 @@ submit, without reloading the page.
 Make the input in `Starter.jsx` a controlled component. On submit, prevent
 the page reload, and show a thank-you message using the submitted email.
 
+Wrap the input in a `.form-field`, and style the input and button with
+`.input` and `.btn btn-primary` from `src/index.css` — don't add new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 What is the difference between a "controlled" and "uncontrolled" input in

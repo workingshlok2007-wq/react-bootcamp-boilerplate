@@ -1,13 +1,37 @@
+/* ==========================================================================
+   Design tokens
+   ========================================================================== */
 :root {
   --text: #3f3d45;
   --text-h: #08060d;
+  --text-muted: #767380;
   --bg: #fff;
   --bg-alt: #f7f6f9;
+  --surface: #ffffff;
   --border: #e5e4e7;
+
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-contrast: #ffffff;
+
+  --success: #1a8a4a;
+  --success-bg: rgba(26, 138, 74, 0.1);
+  --warning: #b5790a;
+  --warning-bg: rgba(181, 121, 10, 0.12);
   --danger: #d9363e;
   --danger-bg: rgba(217, 54, 62, 0.1);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(8, 6, 13, 0.06);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -26,13 +50,24 @@
   :root {
     --text: #c7c5cc;
     --text-h: #f3f4f6;
+    --text-muted: #8b8894;
     --bg: #16171d;
     --bg-alt: #1c1d24;
+    --surface: #1c1d24;
     --border: #2e303a;
+
     --accent: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-contrast: #16171d;
+
+    --success: #4fd18b;
+    --success-bg: rgba(79, 209, 139, 0.14);
+    --warning: #e0ac4c;
+    --warning-bg: rgba(224, 172, 76, 0.14);
     --danger: #f2777a;
     --danger-bg: rgba(242, 119, 122, 0.15);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -49,11 +84,9 @@ h1, h2, h3, h4 {
   font-weight: 600;
 }
 
-button {
-  font: inherit;
-  cursor: pointer;
-}
-
+/* ==========================================================================
+   App shell (sidebar + preview) — not part of the design system below
+   ========================================================================== */
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -112,25 +145,271 @@ button {
   margin-top: 24px;
 }
 
-/* Generic building-block classes used across the question starters */
+/* ==========================================================================
+   Question design system
+   ------------------------------------------------------------------------
+   These are the ONLY classes questions should use for styling. Don't add
+   new CSS or inline styles — if a question needs something not covered
+   here, ask rather than improvising. This keeps every student's markup
+   comparable, so a review is about React, not CSS.
+   ========================================================================== */
+
+/* --- Layout helpers -------------------------------------------------- */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* --- Cards (Q1 team cards, Q2/Q10 products, Q3 posts) ----------------- */
 .card,
 .product,
 .post {
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  margin: 8px 0;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+  margin: var(--space-2) 0;
   display: inline-block;
-  min-width: 180px;
+  min-width: 200px;
   text-align: left;
 }
 
-.badge-sold-out {
-  display: inline-block;
-  background: var(--danger-bg);
+.card h3,
+.product h4,
+.post p {
+  margin: 0 0 var(--space-1);
+}
+
+.post img {
+  width: 100%;
+  max-width: 240px;
+  border-radius: var(--radius-sm);
+  display: block;
+  margin-bottom: var(--space-2);
+  background: var(--bg-alt);
+}
+
+/* --- Buttons ----------------------------------------------------------- */
+.btn {
+  font: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.btn:hover {
+  background: var(--bg-alt);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--bg-alt);
+}
+
+.btn-danger {
+  border-color: var(--danger);
   color: var(--danger);
+  background: transparent;
+}
+
+.btn-danger:hover {
+  background: var(--danger-bg);
+}
+
+.btn-active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* --- Badges (Q2 sold out, Extra Practice: New/Featured/Discount tags) -- */
+.badge {
+  display: inline-flex;
+  align-items: center;
   border-radius: 999px;
   padding: 4px 12px;
   font-size: 13px;
   font-weight: 600;
+}
+
+.badge-danger,
+.badge-sold-out {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-neutral {
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+/* --- Forms (Q4 newsletter form, Extra Practice: login/feedback forms) -- */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.input,
+.textarea,
+.select {
+  font: inherit;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-error {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* --- Nav / filter bars (Q7 filters, Q10 navbar) ------------------------ */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+  margin-bottom: var(--space-4);
+  font-weight: 600;
+}
+
+.filter-bar {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+/* --- Carousel (Q9) ------------------------------------------------------ */
+.carousel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.carousel img {
+  width: 240px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+}
+
+.carousel-dots {
+  display: flex;
+  gap: var(--space-1);
+  justify-content: center;
+  margin-top: var(--space-2);
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.carousel-dot.active {
+  background: var(--accent);
+}
+
+/* --- Loading / status text (Q5) and countdown numerals (Q6) ------------ */
+.loading-text {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.countdown {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* --- Plain lists (Extra Practice: FAQ / movie lists) -------------------- */
+.list-plain {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }

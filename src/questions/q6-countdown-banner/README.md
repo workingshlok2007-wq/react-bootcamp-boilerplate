@@ -27,6 +27,9 @@ zero.
 Implement the ticking countdown in `Starter.jsx`. Stop at 0 and show "Sale
 Ended!". Make sure the interval is cleared properly (no memory leaks).
 
+Wrap the number in a `.countdown` span for tabular, monospace digits —
+see `src/index.css`. Don't add new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 What bug occurs if you use `setSeconds(seconds - 1)` instead of the

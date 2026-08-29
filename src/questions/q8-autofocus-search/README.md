@@ -27,6 +27,9 @@ immediately without clicking.
 Auto-focus the input in `Starter.jsx` on mount using `useRef` and
 `useEffect`.
 
+Style the input with the `.input` class from `src/index.css` — don't add
+new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 Why would using `useState` instead of `useRef` to store the DOM node be

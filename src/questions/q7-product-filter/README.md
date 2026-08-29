@@ -27,6 +27,10 @@ a callback down to `FilterButtons` so clicking a button updates the
 parent's state. Filter `ProductList`'s items based on that state
 (including an "All" option that shows everything).
 
+Wrap the filter buttons in `.filter-bar`, style each with `.btn`, and add
+`.btn-active` to whichever one is currently selected — see
+`src/index.css`. Don't add new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 Why can't `FilterButtons` and `ProductList` share state directly without a

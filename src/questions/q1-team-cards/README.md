@@ -43,6 +43,9 @@ component. Store the bakers as an array of objects (each with an `id`,
 `key`. When you're done, adding a new baker should mean adding one object
 to the array — no copy-pasted JSX.
 
+The `.card` class (used in the starter markup) already comes from
+`src/index.css` — don't add new CSS, just reuse it on `BakerCard`.
+
 ## 🔍 Go Deeper (optional research)
 
 Why does React warn about using array index as `key`? Try reordering the

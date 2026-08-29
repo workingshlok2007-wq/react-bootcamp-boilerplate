@@ -33,6 +33,9 @@ function. Use `useContext` in `Navbar` to show the cart count, and in
 `ProductCard` to add items to the cart — with no prop drilling between
 them.
 
+Style `Navbar` with `.navbar` and the "Add to Cart" button with
+`.btn btn-primary` — see `src/index.css`. Don't add new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 What problem does Context solve that "lifting state up" (Q7) doesn't scale

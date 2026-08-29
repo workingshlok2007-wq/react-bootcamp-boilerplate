@@ -28,6 +28,9 @@ Add `useState` for `liked` and `likeCount` in `Starter.jsx`. Clicking the
 button should toggle the liked state, change the button label, and
 increment/decrement the count accordingly.
 
+Style the button with the `.btn` class from `src/index.css` (add
+`btn-primary` when liked, if you'd like) — don't add new CSS.
+
 ## 🔍 Go Deeper (optional research)
 
 What happens if you try to update `likeCount` using `likeCount++` instead
