@@ -9,6 +9,9 @@ This is **not** an auto-graded platform — there's no execution engine
 scoring your code. Your work is reviewed by comparing your branches against
 what the concepts require.
 
+> ⭐ **Star this repo** before you start — it's step 1 of the submission
+> checklist below.
+
 ## Getting Started
 
 ```bash
@@ -41,9 +44,9 @@ not a styling one.
 
 ## The Rules
 
-- **One branch per question**, named exactly as the question folder (e.g.
-  `q1-team-cards`, `q7-product-filter`). Don't mix multiple questions on
-  one branch.
+- **One branch per question**, named **`<your-roll-number>-q<N>`** — e.g.
+  roll number `A110` on Q1 is branch `A110-q1`. Use the same roll number
+  format on all 10 branches. Don't mix multiple questions on one branch.
 - **Only edit the `Starter.jsx`** inside that question's folder on that
   branch. Leave other files and other questions alone.
 - **Don't add or edit CSS.** Style your markup using only the classes
@@ -59,8 +62,26 @@ not a styling one.
 - **No AI-generated code.** Code must be self-written. You should be able
   to explain any line of your own code if asked in a random spot-check
   (viva-style).
-- **Submission** = pushing all 10 branches and opening Pull Requests back
-  to your own fork (not the original boilerplate repo).
+- **Submission** = pushing all 10 branches and opening a Pull Request from
+  each one — from your fork **back to this repo's `main`** (not left
+  sitting on your own fork) — using GitHub's "compare across forks" option.
+
+## Submission Checklist
+
+Work through this once per question, 10 times total:
+
+- [ ] Repo starred ⭐ (once, not per question)
+- [ ] Branch named `<rollnumber>-qN` and created off `main`
+- [ ] Only that question's `Starter.jsx` changed
+- [ ] Only the classes from `src/index.css` used — no new CSS
+- [ ] Commit message explains what you built, in your own words
+- [ ] Branch pushed to your fork
+- [ ] Pull Request opened from your fork into `react-bootcamp-boilerplate:main`
+      (not left on your fork), with the PR template filled in
+
+A bot checks your branch name and file scope automatically when you open
+the PR and will comment if something's off — fix it and push again to the
+same branch, no need to re-open the PR.
 
 ## Questions
 

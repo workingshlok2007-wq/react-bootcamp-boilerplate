@@ -1,0 +1,131 @@
+name: Submission structure check
+
+# Runs against the PR metadata and file list only via the GitHub API —
+# never checks out or executes a contributor's branch. That keeps this
+# safe to run automatically on PRs from forks (pull_request_target grants
+# write access to the *base* repo's GITHUB_TOKEN, so untrusted code must
+# never be checked out or run here).
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name, file scope, and star status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const QUESTION_SLUGS = {
+              1: 'q1-team-cards',
+              2: 'q2-sold-out-badge',
+              3: 'q3-like-button',
+              4: 'q4-newsletter-form',
+              5: 'q5-testimonials-loader',
+              6: 'q6-countdown-banner',
+              7: 'q7-product-filter',
+              8: 'q8-autofocus-search',
+              9: 'q9-image-carousel',
+              10: 'q10-shopping-cart',
+            };
+            const MARKER = '<!-- pr-structure-check -->';
+
+            const pr = context.payload.pull_request;
+            const branch = pr.head.ref;
+            const [owner, repo] = [context.repo.owner, context.repo.repo];
+
+            const lines = [];
+            let ok = true;
+
+            // --- 1. Branch name: <rollnumber>-q<N> -------------------------------
+            const match = branch.match(/^([A-Za-z0-9]+)-q([1-9]|10)$/);
+            if (!match) {
+              ok = false;
+              lines.push(
+                `❌ **Branch name** \`${branch}\` doesn't match the required ` +
+                `\`<rollnumber>-qN\` pattern (e.g. \`A110-q1\`). Rename your ` +
+                `branch, push again, and this PR will pick up the new branch ` +
+                `automatically once you re-target it — otherwise close this ` +
+                `PR and open a new one from the correctly named branch.`
+              );
+            } else {
+              const [, roll, qNumStr] = match;
+              const qNum = parseInt(qNumStr, 10);
+              const slug = QUESTION_SLUGS[qNum];
+              lines.push(`✅ **Branch name** looks right — roll \`${roll}\`, question Q${qNum}.`);
+
+              // --- 2. File scope: only that question's Starter.jsx ---------------
+              const files = await github.paginate(github.rest.pulls.listFiles, {
+                owner, repo, pull_number: pr.number, per_page: 100,
+              });
+              const expected = `src/questions/${slug}/Starter.jsx`;
+              const paths = files.map((f) => f.filename);
+              const unexpected = paths.filter((p) => p !== expected);
+
+              if (paths.length === 0) {
+                ok = false;
+                lines.push(`❌ **File scope** — no files changed in this PR.`);
+              } else if (unexpected.length > 0) {
+                ok = false;
+                lines.push(
+                  `❌ **File scope** — this PR should only touch \`${expected}\`. ` +
+                  `It also changes:\n` +
+                  unexpected.map((p) => `  - \`${p}\``).join('\n')
+                );
+              } else {
+                lines.push(`✅ **File scope** — only \`${expected}\` changed.`);
+              }
+            }
+
+            // --- 3. Star check (informational only, never fails the check) -------
+            let starred = false;
+            try {
+              const stars = await github.paginate(
+                github.rest.activity.listReposStarredByUser,
+                { username: pr.user.login, per_page: 100 },
+                (response) => response.data,
+              );
+              starred = stars.some((r) => r.full_name === `${owner}/${repo}`);
+            } catch (err) {
+              // Star list unreadable (rare) — skip silently, don't block on it.
+            }
+            lines.push(
+              starred
+                ? `⭐ Thanks for starring the repo!`
+                : `⭐ Looks like you haven't starred this repo yet — please do, it's on the submission checklist.`
+            );
+
+            const summary = ok
+              ? '### ✅ Structure check passed'
+              : '### ❌ Structure check found problems — fix and push again to this branch';
+
+            const body = `${MARKER}\n${summary}\n\n${lines.join('\n\n')}\n\n` +
+              `_This is an automated structural check (branch name + which files changed). ` +
+              `It says nothing about whether your React code is correct — your instructor ` +
+              `reviews that separately._`;
+
+            // Update the existing bot comment if there is one, else create a new one.
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number: pr.number, per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.user.type === 'Bot' && c.body.includes(MARKER)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: pr.number, body,
+              });
+            }
+
+            if (!ok) {
+              core.setFailed('Submission structure check failed — see PR comment for details.');
+            }
