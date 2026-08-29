@@ -36,6 +36,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/submissions.md
+          git add docs/submissions.md docs/submissions.json
           git diff --cached --quiet && echo "No changes" || git commit -m "Update submission tracker"
           git push

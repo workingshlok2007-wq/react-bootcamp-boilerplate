@@ -133,10 +133,29 @@ async function main() {
   const markdown = lines.join('\n') + '\n';
   console.log(markdown);
 
+  const json = {
+    generatedAt: new Date().toISOString(),
+    owner: OWNER,
+    repo: REPO,
+    totalPrs: prs.length,
+    students: rows.map((row) => ({
+      roll: row.roll,
+      questionsDone: [...row.qnums].sort((a, b) => a - b),
+      done: row.qnums.size,
+      total: QNUMS.length,
+      state: row.state,
+      author: row.author,
+      prNumber: row.prNumber,
+      prUrl: row.prUrl,
+      foreignFiles: row.foreignFiles,
+    })),
+  };
+
   const fs = await import('node:fs/promises');
   await fs.mkdir('docs', { recursive: true });
   await fs.writeFile('docs/submissions.md', markdown);
-  console.error(`\nWrote docs/submissions.md (${rows.length} students found across ${prs.length} PRs).`);
+  await fs.writeFile('docs/submissions.json', JSON.stringify(json, null, 2) + '\n');
+  console.error(`\nWrote docs/submissions.md and docs/submissions.json (${rows.length} students found across ${prs.length} PRs).`);
 }
 
 main().catch((err) => {
