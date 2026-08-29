@@ -1,0 +1,41 @@
+name: Generate submission tracker
+
+# Manually triggered from the Actions tab (Run workflow button). Scans
+# every PR on this repo and rebuilds docs/submissions.md — a roll number
+# x Q1-Q10 completeness table. This never checks out a contributor's
+# branch; it only reads PR metadata/file lists via the API and writes to
+# main directly as the github-actions bot.
+on:
+  workflow_dispatch: {}
+  # Uncomment to also regenerate automatically, e.g. every night:
+  # schedule:
+  #   - cron: '0 2 * * *'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  tracker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate docs/submissions.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRACKER_OWNER: ${{ github.repository_owner }}
+          TRACKER_REPO: ${{ github.event.repository.name }}
+        run: node scripts/generate-tracker.mjs
+
+      - name: Commit tracker if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/submissions.md
+          git diff --cached --quiet && echo "No changes" || git commit -m "Update submission tracker"
+          git push

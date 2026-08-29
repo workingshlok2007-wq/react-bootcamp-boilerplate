@@ -1,10 +1,10 @@
 name: Submission structure check
 
-# Runs against the PR metadata and file list only via the GitHub API —
-# never checks out or executes a contributor's branch. That keeps this
-# safe to run automatically on PRs from forks (pull_request_target grants
-# write access to the *base* repo's GITHUB_TOKEN, so untrusted code must
-# never be checked out or run here).
+# Runs against the PR metadata and file/commit lists only, via the GitHub
+# API — never checks out or executes a contributor's branch. That keeps
+# this safe to run automatically on PRs from forks (pull_request_target
+# grants write access to the *base* repo's GITHUB_TOKEN, so untrusted code
+# must never be checked out or run here).
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited]
@@ -16,7 +16,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Check branch name, file scope, and star status
+      - name: Check branch name, commits, and star status
         uses: actions/github-script@v7
         with:
           script: |
@@ -32,6 +32,11 @@ jobs:
               9: 'q9-image-carousel',
               10: 'q10-shopping-cart',
             };
+            const PATH_TO_QNUM = Object.fromEntries(
+              Object.entries(QUESTION_SLUGS).map(
+                ([n, slug]) => [`src/questions/${slug}/Starter.jsx`, Number(n)]
+              )
+            );
             const MARKER = '<!-- pr-structure-check -->';
 
             const pr = context.payload.pull_request;
@@ -41,47 +46,68 @@ jobs:
             const lines = [];
             let ok = true;
 
-            // --- 1. Branch name: <rollnumber>-q<N> -------------------------------
-            const match = branch.match(/^([A-Za-z0-9]+)-q([1-9]|10)$/);
-            if (!match) {
+            // --- 1. Branch name: exactly the roll number ------------------------
+            const branchOk = /^[A-Za-z0-9]+$/.test(branch);
+            if (!branchOk) {
               ok = false;
               lines.push(
-                `❌ **Branch name** \`${branch}\` doesn't match the required ` +
-                `\`<rollnumber>-qN\` pattern (e.g. \`A110-q1\`). Rename your ` +
-                `branch, push again, and this PR will pick up the new branch ` +
-                `automatically once you re-target it — otherwise close this ` +
-                `PR and open a new one from the correctly named branch.`
+                `❌ **Branch name** \`${branch}\` should be exactly your roll ` +
+                `number (letters/numbers only, e.g. \`A110\`) — no extra words ` +
+                `or punctuation.`
               );
             } else {
-              const [, roll, qNumStr] = match;
-              const qNum = parseInt(qNumStr, 10);
-              const slug = QUESTION_SLUGS[qNum];
-              lines.push(`✅ **Branch name** looks right — roll \`${roll}\`, question Q${qNum}.`);
-
-              // --- 2. File scope: only that question's Starter.jsx ---------------
-              const files = await github.paginate(github.rest.pulls.listFiles, {
-                owner, repo, pull_number: pr.number, per_page: 100,
-              });
-              const expected = `src/questions/${slug}/Starter.jsx`;
-              const paths = files.map((f) => f.filename);
-              const unexpected = paths.filter((p) => p !== expected);
-
-              if (paths.length === 0) {
-                ok = false;
-                lines.push(`❌ **File scope** — no files changed in this PR.`);
-              } else if (unexpected.length > 0) {
-                ok = false;
-                lines.push(
-                  `❌ **File scope** — this PR should only touch \`${expected}\`. ` +
-                  `It also changes:\n` +
-                  unexpected.map((p) => `  - \`${p}\``).join('\n')
-                );
-              } else {
-                lines.push(`✅ **File scope** — only \`${expected}\` changed.`);
-              }
+              lines.push(`✅ **Branch name** \`${branch}\` looks like a roll number.`);
             }
 
-            // --- 3. Star check (informational only, never fails the check) -------
+            // --- 2. File scope across the whole PR -------------------------------
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner, repo, pull_number: pr.number, per_page: 100,
+            });
+            const paths = files.map((f) => f.filename);
+            const foreign = paths.filter((p) => !(p in PATH_TO_QNUM));
+            const touchedQNums = paths
+              .filter((p) => p in PATH_TO_QNUM)
+              .map((p) => PATH_TO_QNUM[p])
+              .sort((a, b) => a - b);
+
+            if (paths.length === 0) {
+              ok = false;
+              lines.push(`❌ **Files** — no files changed in this PR yet.`);
+            } else if (foreign.length > 0) {
+              ok = false;
+              lines.push(
+                `❌ **Files** — only \`Starter.jsx\` files under \`src/questions/\` ` +
+                `should change. This PR also touches:\n` +
+                foreign.map((p) => `  - \`${p}\``).join('\n')
+              );
+            } else {
+              const done = touchedQNums.map((n) => `Q${n}`).join(', ');
+              const missing = Object.keys(QUESTION_SLUGS)
+                .map(Number)
+                .filter((n) => !touchedQNums.includes(n))
+                .map((n) => `Q${n}`)
+                .join(', ');
+              lines.push(
+                `✅ **Files** — commits found for: ${done || 'none yet'}.` +
+                (missing ? ` Not yet submitted: ${missing}.` : ' All 10 questions present!')
+              );
+            }
+
+            // --- 3. One commit per question (soft check) --------------------------
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner, repo, pull_number: pr.number, per_page: 100,
+            });
+            if (touchedQNums.length > 0 && commits.length < touchedQNums.length) {
+              lines.push(
+                `⚠️ **Commits** — you have ${commits.length} commit(s) but changes ` +
+                `across ${touchedQNums.length} question(s). Aim for one commit per ` +
+                `question so your history shows your work question-by-question.`
+              );
+            } else if (touchedQNums.length > 0) {
+              lines.push(`✅ **Commits** — ${commits.length} commit(s) for ${touchedQNums.length} question(s).`);
+            }
+
+            // --- 4. Star check (informational only, never fails the check) -------
             let starred = false;
             try {
               const stars = await github.paginate(
@@ -104,9 +130,10 @@ jobs:
               : '### ❌ Structure check found problems — fix and push again to this branch';
 
             const body = `${MARKER}\n${summary}\n\n${lines.join('\n\n')}\n\n` +
-              `_This is an automated structural check (branch name + which files changed). ` +
-              `It says nothing about whether your React code is correct — your instructor ` +
-              `reviews that separately._`;
+              `_This is an automated structural check (branch name, which files ` +
+              `changed, commit count). It says nothing about whether your React ` +
+              `code is correct — your instructor reviews that separately, and this ` +
+              `PR updates automatically as you push more commits._`;
 
             // Update the existing bot comment if there is one, else create a new one.
             const comments = await github.paginate(github.rest.issues.listComments, {

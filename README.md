@@ -3,7 +3,7 @@
 A hands-on React.js learning repo built around 10 scenario-based coding
 challenges. Each challenge is framed as a real client request, teaches 2–3
 related React concepts, and doubles as practice for a real Git workflow
-(fork → branch per question → commit → push → PR).
+(fork → one branch → one commit per question → push → PR).
 
 This is **not** an auto-graded platform — there's no execution engine
 scoring your code. Your work is reviewed by comparing your branches against
@@ -44,11 +44,13 @@ not a styling one.
 
 ## The Rules
 
-- **One branch per question**, named **`<your-roll-number>-q<N>`** — e.g.
-  roll number `A110` on Q1 is branch `A110-q1`. Use the same roll number
-  format on all 10 branches. Don't mix multiple questions on one branch.
-- **Only edit the `Starter.jsx`** inside that question's folder on that
-  branch. Leave other files and other questions alone.
+- **One branch, named exactly after your roll number** — e.g. `A110`.
+  Everything you build lives on this one branch; you never switch to a
+  new branch between questions.
+- **One commit per question**, each touching only that question's
+  `Starter.jsx`. By the end you'll have 10 commits on your branch, in
+  order. Don't bundle multiple questions into one commit, and don't touch
+  any file outside the question you're committing.
 - **Don't add or edit CSS.** Style your markup using only the classes
   already defined in `src/index.css` (see Styling above and the note in
   each question's README). If you think a question genuinely needs a new
@@ -62,26 +64,31 @@ not a styling one.
 - **No AI-generated code.** Code must be self-written. You should be able
   to explain any line of your own code if asked in a random spot-check
   (viva-style).
-- **Submission** = pushing all 10 branches and opening a Pull Request from
-  each one — from your fork **back to this repo's `main`** (not left
-  sitting on your own fork) — using GitHub's "compare across forks" option.
+- **Submission** = pushing your one branch and opening **one Pull
+  Request** from it — from your fork **back to this repo's `main`** (not
+  left sitting on your own fork) — using GitHub's "compare across forks"
+  option.
 
 ## Submission Checklist
 
-Work through this once per question, 10 times total:
-
-- [ ] Repo starred ⭐ (once, not per question)
-- [ ] Branch named `<rollnumber>-qN` and created off `main`
-- [ ] Only that question's `Starter.jsx` changed
+- [ ] Repo starred ⭐
+- [ ] One branch, named exactly `<rollnumber>`, created off `main`
+- [ ] 10 commits on that branch, one per question, each touching only that
+      question's `Starter.jsx`
 - [ ] Only the classes from `src/index.css` used — no new CSS
-- [ ] Commit message explains what you built, in your own words
+- [ ] Each commit message explains what you built, in your own words
 - [ ] Branch pushed to your fork
-- [ ] Pull Request opened from your fork into `react-bootcamp-boilerplate:main`
-      (not left on your fork), with the PR template filled in
+- [ ] One Pull Request opened from your fork into
+      `react-bootcamp-boilerplate:main` (not left on your fork), with the
+      PR template filled in
 
-A bot checks your branch name and file scope automatically when you open
-the PR and will comment if something's off — fix it and push again to the
-same branch, no need to re-open the PR.
+A bot checks your branch name and which questions your commits touch
+automatically when you open the PR, and comments if something's off — fix
+it, push more commits to the same branch, and the same PR updates itself.
+
+[`docs/submissions.md`](./docs/submissions.md) is a roll-number × question
+completeness table, regenerated from the Actions tab — it tracks which
+questions have a commit in your PR, not whether the code is correct.
 
 ## Questions
 
