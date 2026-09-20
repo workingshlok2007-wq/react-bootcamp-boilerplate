@@ -8,7 +8,11 @@ function ProductCard({ name, stock }) {
   return (
     <div className="product">
       <h4>{name}</h4>
-      {/* TODO: show "Sold Out" badge if stock is 0, else show Add to Cart button */}
+      {stock == 0 ? (
+        <span className="badge badge-danger">Sold Out</span>
+      ) : (
+        <button className="btn btn-primary">Add to Cart</button>
+      )}
     </div>
   );
 }
@@ -22,4 +26,5 @@ function ProductList() {
     </div>
   );
 }
+
 export default ProductList;
